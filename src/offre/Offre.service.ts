@@ -254,6 +254,27 @@ export class BlService {
             return paginationResult;
           }
           
+
+          async paginateFiltrageTrue(userId: number, options: ICustomPaginationOptions): Promise<Pagination<Bl, IPaginationMeta>> {
+            const queryBuilder = this.blRepository.createQueryBuilder('bl');
+            queryBuilder.where('bl.userId = :userId', { userId });
+          
+            if (options.filters && options.filters.dateBl) {
+              queryBuilder.andWhere('bl.dateBl = :dateBl', { dateBl: options.filters.dateBl });
+            }
+          
+            if (options.filters && options.filters.matriculeFiscale) {
+              queryBuilder.andWhere('bl.matriculeFiscale = :matriculeFiscale', { matriculeFiscale: options.filters.matriculeFiscale });
+            }
+          
+            if (options.filters && options.filters.reference) {
+              queryBuilder.andWhere('bl.reference = :reference', { reference: options.filters.reference });
+            }
+                      queryBuilder.andWhere('bl.verified = :verified', { verified: true });
+          
+            const paginationResult = await paginate<Bl, IPaginationMeta>(queryBuilder, options);
+            return paginationResult;
+          }
           findOne(id: number): Promise<Bl | null> {
             return this.blRepository.findOneBy({ id });
         }

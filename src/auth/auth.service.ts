@@ -35,6 +35,43 @@ export class AuthService {
   }
 
 
+  async onModuleInit() {
+    await this.createDefaultAdmin();
+  }
+
+  private async createDefaultAdmin(): Promise<User> {
+    const existingAdmin = await this.findOne('admin@admin.com');
+
+    if (!existingAdmin) {
+      const defaultAdmin: User = {
+        matriculeFiscale: '',
+        email: 'admin@admin.com',
+        role: 'admin',
+        name: 'admin',
+        active: true,
+        password: await bcrypt.hash('admin', 10),
+        id: 0,
+        resetCode: null,
+        bonDeLiv: []
+      };
+
+      return await this.createAdmin(defaultAdmin);
+    }
+
+    return existingAdmin;
+  }
+
+
+  async createAdmin(data: any): Promise<User> {
+    const userData = {
+      ...data,
+      role: 'admin',
+      active:true
+    };
+  
+    return this.userRepository.save(userData);
+  }
+
   async create(data: any): Promise<User> {
     const userData = {
       ...data,

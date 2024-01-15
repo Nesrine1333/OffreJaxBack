@@ -623,7 +623,7 @@ async updateBonDeLivraison(
 }
 
 @Get(':idUser/getAllBlByUserFilter/:page/:limit')
-async getBlByUserIdAndFiltrage(
+async getBlByUserIdAndFiltrageFalse(
   @Param('idUser', ParseIntPipe) userId: number,
   @Param('page', ParseIntPipe) page: number,@Param('limit', ParseIntPipe) limit: number,
   @Query('dateBl') dateBl?: Date,
@@ -645,6 +645,29 @@ async getBlByUserIdAndFiltrage(
 
 }
 
+
+@Get(':idUser/getAllBlByUserFilterTrue/:page/:limit')
+async getBlByUserIdAndFiltrageTrue(
+  @Param('idUser', ParseIntPipe) userId: number,
+  @Param('page', ParseIntPipe) page: number,@Param('limit', ParseIntPipe) limit: number,
+  @Query('dateBl') dateBl?: Date,
+  @Query('matriculeFiscale') matriculeFiscale?: string,
+  @Query('reference') reference?: string, 
+  ): Promise<Pagination<Bl, IPaginationMeta>> {
+    const options: ICustomPaginationOptions = {
+      page,
+      limit,
+      route: `${userId}`,
+      filters: {
+        dateBl,
+        matriculeFiscale,
+        reference,
+      },
+    };
+
+  return this.BlService.paginateFiltrageTrue(userId, options);
+
+}
 @Get(':idUser/GetOffreValidation/:valid/:page/:limit')
 getNotValideBL(@Param('idUser', ParseIntPipe) userId: number,valid:boolean):Promise<Bl[]>{
   return this.BlService.getNotValideBL(userId,!valid);
